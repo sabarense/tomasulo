@@ -197,16 +197,19 @@ class TomasuloSim:
 
     # ----------- Busca de RS livre -----------
     def find_rs(self, kind: str) -> Optional[RSEntry]:
-        table = {
-            "ADD": self.RS_ADD,
-            "SUB": self.RS_ADD,
-            "MUL": self.RS_MUL,
-            "DIV": self.RS_MUL,
-            "LD": self.RS_LS,
-            "ST": self.RS_LS,
-            "BEQ": self.RS_BR,
-            "BNE": self.RS_BR
-        }[kind]
+        if kind in ("NOP", "HALT"):
+             table = self.RS_BR
+        else:
+            table = {
+                "ADD": self.RS_ADD,
+                "SUB": self.RS_ADD,
+                "MUL": self.RS_MUL,
+                "DIV": self.RS_MUL,
+                "LD": self.RS_LS,
+                "ST": self.RS_LS,
+                "BEQ": self.RS_BR,
+                "BNE": self.RS_BR
+            }[kind]
         for rs in table:
             if not rs.busy:
                 return rs
@@ -630,6 +633,8 @@ if "sim" not in st.session_state or st.button("(Re)Montar & Resetar", type="prim
         "ST": int(lat_st),
         "BEQ": int(lat_br),
         "BNE": int(lat_br),
+        "NOP": 1,
+        "HALT": 1,
     }
     sizes = {
         "RS_ADD": int(rs_add),
